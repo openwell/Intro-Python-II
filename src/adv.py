@@ -43,10 +43,15 @@ print(room['outside'])
 def hunted_house():
     c_player = Player('Toni', 'outside')
     current_room = c_player.c_room
+    print(current_room)
+    print('hi')
     def init_room(r_name):
         new_room = room[r_name]
         return new_room
     def alt_room_player(room):
+        nonlocal current_room
+        current_room = room
+        print(current_room)
         c_player.set_c_room(room)
     def room_checker(direction):
         direc = direction.lower()
