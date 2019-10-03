@@ -1,5 +1,5 @@
 from room import Room
-
+from player import Player
 # Declare all the rooms
 
 room = {
@@ -36,9 +36,61 @@ room['treasure'].s_to = room['narrow']
 #
 # Main
 #
-
+print(room['outside'])
 # Make a new player object that is currently in the 'outside' room.
 
+
+def hunted_house():
+    c_player = Player('Toni', 'outside')
+    current_room = c_player.c_room
+    def init_room(r_name):
+        new_room = room[r_name]
+        return new_room
+    def alt_room_player(room):
+        c_player.set_c_room(room)
+    def room_checker(direction):
+        direc = direction.lower()
+        if current_room == 'outside' and direc == 'n':
+            alt_room_player('foyer')
+        elif current_room == 'foyer' and direc == 's' or direc == 'n' or direc == 'e':
+            if direc == 's':
+                alt_room_player('outside')
+            elif direc == 'n':
+                alt_room_player('overlook')
+            elif direc == 'e':
+                alt_room_player('narrow')
+        elif current_room == 'overlook' and direc == 's':
+            alt_room_player('foyer')
+        elif current_room == 'narrow' and direc == 'w' or direc == 'n':
+            if direc == 'w':
+                alt_room_player('foyer')
+            elif direc == 'n':
+                alt_room_player('treasure')
+        elif current_room == 'treasure' and direc == 's':
+            alt_room_player('narrow')
+        else:
+            print(f'🚫 incorrect direction for {current_room} room')
+    while True:
+        print('Welcome to the Hunted House 😄')
+        print(init_room(current_room))
+        print('For Movement n for ⬆️, w for ➡️, s for ⬇️, w for ⬅️ , q to quit')
+        direction = input('kindly input your instruction:❓')
+        if direction.lower() == 'n':
+            room_checker(direction)
+        elif direction.lower() == 'w':
+            room_checker(direction)
+        elif direction.lower() == 'e':
+            room_checker(direction)
+        elif direction.lower() == 's':
+            room_checker(direction)
+        elif direction.lower() == 'q':
+            print('bye')
+            break
+        else:
+            print('🚫 incorrect input kindly enter another')
+
+
+hunted_house()
 # Write a loop that:
 #
 # * Prints the current room name
