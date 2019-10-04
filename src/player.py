@@ -3,15 +3,25 @@
 
 
 class Player:
-    def __init__(self, p_name, c_room):
-        self.p_name = p_name
-        self.c_room = c_room
 
-    def __str__(self):
-        return f'{self.p_name} \n {self.c_room}'
+    def __init__(self, name, current_room, items=[]):
+        self.name = name
+        self.items = items
+        self.current_room = current_room
 
-    def set_p_name(self, p_name):
-        self.p_name = p_name
+    def getCurrentRoom(self):
+        return self.current_room
 
-    def set_c_room(self, c_room):
-        self.c_room = c_room
+    def getName(self):
+        return self.name
+
+    def setCurrentRoom(self, room):
+        self.current_room = room
+        
+    def printInventory(self):
+        inventory_str = ""
+        if len(self.items) == 0:
+            return print("No items in your inventory")
+        for item in self.items:
+            inventory_str += ("\n"+ item.name)
+        return print(f"\nItems in your inventory: {inventory_str}")
