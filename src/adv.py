@@ -1,5 +1,6 @@
 from room import Room
-
+from player import Player
+from item import Item
 # Declare all the rooms
 
 room = {
@@ -33,12 +34,134 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+
+# Link items to rooms
+
+item = {
+    'book': Item("Book", "A piece to take notes"),
+    'sword': Item("Sword", "A weapon to fight enemies"),
+    'amulet': Item("Amulet", "A good luck charm"),
+    'knife': Item("Knife", "a tool with a cutting edge or blade attached to a handle"),
+    'laptop': Item("Laptop", "a computer that is portable and suitable for use while travelling."),
+    'phone': Item("Phone", "system for transmitting voices over a distance using wire or radio"),
+    'guitar': Item("Guitar", "a stringed musical instrument")
+}
+
+
+room['outside'].items = [
+    item['book'],
+    item['sword']
+]
+
+room['foyer'].items = [
+    item['amulet'],
+    item['knife'],
+]
+
+room['overlook'].items = [
+    item['laptop'],
+]
+
+room['narrow'].items = [
+    item['phone']
+]
+
+room['treasure'].items = [
+    item['guitar']
+]
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+tom = Player("tom", room['outside'])
+def printInstructions():
+    print('**************************')
+    print('* Please input direction to go or action to take')
+    print('* Allowed directions are: \n'
+            + '*  n to move north\n'
+            + '*  s to move south\n'
+            + '*  w to move west\n'
+            + '*  e to move east')
+    print('* Allowed actions are \n* `get item` or `take item` to pick an item\n'
+            + '* `drop item` to put an item from your inventory into a room\n' 
+            + '* i or inventory to show items in your inventory\n'
+            + '* l or list to show items in current room\n'
+            + '* where `item` is the name of the item you want to pick or drop')
+    print('**************************')
 
+print('\n  **Welcome to The Adventure Game\n')
+printInstructions()
+print(tom.getCurrentRoom())
+
+while True:
+    user_input = input('\nInput direction to go or action to do: ')
+    splitted_user_input = user_input.split(' ')
+    if len(splitted_user_input) == 2:
+        if splitted_user_input[0] == 'take' or splitted_user_input[0] == 'get':
+            # check if item exist in current room
+            item_exist = False
+            for i in tom.getCurrentRoom().items:
+                if i.name.lower() == splitted_user_input[1].lower():
+                    item_exist = True
+            if item_exist:
+                # add item to player inventory
+                tom.items.append(item[splitted_user_input[1].lower()])
+                item[splitted_user_input[1].lower()].on_take()
+                # and remove from room
+                tom.getCurrentRoom().items.remove(item[splitted_user_input[1].lower()])
+            else:
+                print(splitted_user_input[1].capitalize() + ' is not in this room')
+        elif splitted_user_input[0] == 'drop':
+            item_exist = False
+            # check if item exist in player's inventory
+            for i in tom.items:
+                if i.name.lower() == splitted_user_input[1].lower():
+                    item_exist = True
+            if item_exist:
+                # remove item from player inventory
+                tom.items.remove(item[splitted_user_input[1].lower()])
+                item[splitted_user_input[1].lower()].on_drop()
+                # and add it to the room
+                tom.getCurrentRoom().items.append(item[splitted_user_input[1].lower()])
+            else:
+                print(splitted_user_input[1].capitalize() + ' is not in your inventory')
+        else:
+            print('Wrong Input. Please use get, take or drop keyword with an item')
+    elif user_input == "i" or user_input == "inventory":
+        tom.printInventory()
+    elif user_input == "l" or user_input == "list":
+        print("\nItems in this room: " + tom.getCurrentRoom().items_str())
+    elif user_input == "n":
+        if hasattr(tom.getCurrentRoom(), 'n_to'):
+            tom.setCurrentRoom(tom.getCurrentRoom().n_to)
+            print(tom.getCurrentRoom())
+        else:
+            print(f"\nSorry there is nothing up north...\n")
+    elif user_input == "w":
+        if hasattr(tom.getCurrentRoom(), 'w_to'):
+            tom.setCurrentRoom(tom.getCurrentRoom().w_to)
+            print(tom.getCurrentRoom())
+        else:
+            print(f"\nSorry there is nothing to the west...\n")
+    elif user_input == "s":
+        if hasattr(tom.getCurrentRoom(), 's_to'):
+            tom.setCurrentRoom(tom.getCurrentRoom().s_to)
+            print(tom.getCurrentRoom())
+        else:
+            print(f"\nSorry there is nothing down south...\n")
+    elif user_input == "e":
+        if hasattr(tom.getCurrentRoom(), 'e_to'):
+            tom.setCurrentRoom(tom.getCurrentRoom().e_to)
+            print(tom.getCurrentRoom())
+        else:
+            print(f"\nSorry there is nothing to the east...\n")
+    elif user_input == "q":
+        print('\nThanks for playing... Come back for more fun\n')
+        break
+    else:
+        print('Wrong Input!!!\n Please input direction to go or action to take')
+        printInstructions()
 # Write a loop that:
 #
 # * Prints the current room name
